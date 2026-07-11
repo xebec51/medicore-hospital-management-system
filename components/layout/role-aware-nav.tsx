@@ -12,10 +12,17 @@ export function RoleAwareNav({ role, onNavigate }: { role: AppRole; onNavigate?:
   const { t } = useI18n();
   const items = roleNavConfig[role];
 
+  // Nav hrefs are nested (e.g. "/dashboard/admin" and "/dashboard/admin/doctors"),
+  // so a naive startsWith check would match every ancestor at once. Only the
+  // longest matching href — the most specific one — should be marked active.
+  const activeHref = items
+    .filter((item) => pathname === item.href || pathname.startsWith(`${item.href}/`))
+    .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+
   return (
     <nav className="flex flex-col gap-1">
       {items.map((item) => {
-        const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+        const isActive = item.href === activeHref;
         const Icon = item.icon;
         return (
           <Link
