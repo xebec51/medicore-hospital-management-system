@@ -93,6 +93,8 @@ access control, database-backed workflows, analytics, and polished UI/UX.
 - XLSX export support for operational reporting
 - Prisma + PostgreSQL data model designed around a real patient/appointment
   lifecycle
+- An in-app "Developer Details" page (`/dashboard/developer`), reachable from
+  every role's dashboard, with project and contact information
 
 ---
 
@@ -340,6 +342,7 @@ index.
 - `/dashboard`
 - `/dashboard/profile`
 - `/dashboard/settings`
+- `/dashboard/developer` — developer/project details, open to every authenticated role
 
 ### Admin
 
@@ -585,6 +588,26 @@ webhook flow.
 
 ---
 
+## Performance Notes
+
+- session lookups (`auth()`) are memoized per request with React's `cache()`,
+  since most dashboard pages resolve the session in both the shared layout
+  and the page itself
+- dashboard metric cards use database-side `count`/`aggregate`/`groupBy`
+  queries instead of fetching full rows to sum or count in JavaScript
+- `xlsx` is dynamically imported only when a user actually triggers an
+  export, instead of shipping in the initial bundle of every page that has
+  an export button
+- the Postgres connection pool is bounded (`max: 5`) so Vercel's concurrent
+  serverless instances don't each open unbounded connections against Neon
+- On free-tier serverless/database hosting, the first request after an idle
+  period may be slower due to cold starts. The application uses bounded
+  database pooling and lazy-loaded export libraries to reduce runtime
+  overhead, but a cold Neon compute waking up is outside the application's
+  control.
+
+---
+
 ## Known Limitations
 
 - no patient self-service appointment booking (registration and booking are
@@ -598,6 +621,10 @@ webhook flow.
 - single currency (IDR) and single hospital/tenant — no multi-branch or
   multi-currency support
 - no SMS/email/push notifications for appointment reminders
+- on Neon's free tier, the database compute suspends after a period of
+  idleness, so the first request afterward can be noticeably slower while it
+  wakes back up — this is a hosting characteristic, not something the
+  application code can fix
 
 ---
 
