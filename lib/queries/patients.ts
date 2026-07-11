@@ -10,6 +10,7 @@ export function listPatients() {
       birthDate: true,
       phone: true,
       email: true,
+      address: true,
       bloodType: true,
       allergies: true,
       emergencyContactName: true,
