@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-export function listUsers() {
+export function listUsers(limit = 500) {
   return prisma.user.findMany({
     select: {
       id: true,
@@ -12,6 +12,7 @@ export function listUsers() {
       createdAt: true,
     },
     orderBy: { createdAt: "desc" },
+    take: limit,
   });
 }
 

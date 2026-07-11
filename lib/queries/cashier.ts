@@ -24,22 +24,24 @@ export type PaymentListItem = Awaited<ReturnType<typeof listPayments>>[number];
 
 export async function getCashierDashboardStats() {
   const now = new Date();
-  const [unpaidCount, paidToday, todayPayments] = await Promise.all([
+  const [unpaidCount, paidToday, todayPaymentTotals] = await Promise.all([
     prisma.invoice.count({ where: { status: { in: ["UNPAID", "PARTIALLY_PAID"] } } }),
     prisma.invoice.count({
       where: { status: "PAID", updatedAt: { gte: startOfDayUTC(now), lte: endOfDayUTC(now) } },
     }),
-    prisma.payment.findMany({
+    prisma.payment.groupBy({
+      by: ["method"],
       where: { status: "COMPLETED", createdAt: { gte: startOfDayUTC(now), lte: endOfDayUTC(now) } },
-      select: { amount: true, method: true },
+      _sum: { amount: true },
     }),
   ]);
 
-  const dailyRevenue = todayPayments.reduce((sum, p) => sum + toMoneyNumber(p.amount), 0);
-
   const methodTotals: Record<string, number> = { CASH: 0, BANK_TRANSFER: 0, E_WALLET: 0, INSURANCE: 0 };
-  for (const payment of todayPayments) {
-    methodTotals[payment.method] = (methodTotals[payment.method] ?? 0) + toMoneyNumber(payment.amount);
+  let dailyRevenue = 0;
+  for (const group of todayPaymentTotals) {
+    const amount = toMoneyNumber(group._sum.amount ?? 0);
+    methodTotals[group.method] = amount;
+    dailyRevenue += amount;
   }
 
   return { unpaidCount, paidToday, dailyRevenue, methodTotals };

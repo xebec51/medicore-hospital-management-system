@@ -6,20 +6,20 @@ export async function getAdminOverviewStats() {
   const now = new Date();
   const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
 
-  const [totalPatients, appointmentsToday, activeDoctors, revenuePayments, pendingPrescriptions, lowStockMedicines] =
+  const [totalPatients, appointmentsToday, activeDoctors, revenueAgg, pendingPrescriptions, lowStockMedicines] =
     await Promise.all([
       prisma.patient.count({ where: { status: "ACTIVE" } }),
       prisma.appointment.count({ where: { appointmentDate: { gte: startOfDayUTC(now), lte: endOfDayUTC(now) } } }),
       prisma.doctor.count({ where: { isActive: true } }),
-      prisma.payment.findMany({
+      prisma.payment.aggregate({
         where: { status: "COMPLETED", createdAt: { gte: monthStart } },
-        select: { amount: true },
+        _sum: { amount: true },
       }),
       prisma.prescription.count({ where: { status: "PENDING" } }),
       prisma.medicine.count({ where: { status: "LOW_STOCK" } }),
     ]);
 
-  const revenueThisMonth = revenuePayments.reduce((sum, p) => sum + toMoneyNumber(p.amount), 0);
+  const revenueThisMonth = toMoneyNumber(revenueAgg._sum.amount ?? 0);
 
   return { totalPatients, appointmentsToday, activeDoctors, revenueThisMonth, pendingPrescriptions, lowStockMedicines };
 }
@@ -38,11 +38,11 @@ export async function getDepartmentWorkload(from: Date, to: Date) {
     where: { isActive: true },
     select: {
       name: true,
-      appointments: { where: { appointmentDate: { gte: from, lte: to } }, select: { id: true } },
+      _count: { select: { appointments: { where: { appointmentDate: { gte: from, lte: to } } } } },
     },
   });
   return departments
-    .map((d) => ({ department: d.name, appointments: d.appointments.length }))
+    .map((d) => ({ department: d.name, appointments: d._count.appointments }))
     .sort((a, b) => b.appointments - a.appointments);
 }
 

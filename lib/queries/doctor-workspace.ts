@@ -94,16 +94,20 @@ export function listDoctorPrescriptions(doctorId: string) {
 export type DoctorPrescriptionItem = Awaited<ReturnType<typeof listDoctorPrescriptions>>[number];
 
 export async function getDoctorDashboardStats(doctorId: string) {
-  const todayAppointments = await listDoctorAppointmentsToday(doctorId);
+  const [todayAppointments, recentPatients] = await Promise.all([
+    listDoctorAppointmentsToday(doctorId),
+    // Only .length is used by the dashboard (a capped "recent patients" count),
+    // so the select is trimmed to the one field that's actually read.
+    prisma.appointment.findMany({
+      where: { doctorId, status: "COMPLETED" },
+      select: { id: true },
+      orderBy: { completedAt: "desc" },
+      take: 5,
+    }),
+  ]);
+
   const completed = todayAppointments.filter((a) => a.status === "COMPLETED").length;
   const pending = todayAppointments.filter((a) => a.status === "CHECKED_IN" || a.status === "IN_CONSULTATION").length;
-
-  const recentPatients = await prisma.appointment.findMany({
-    where: { doctorId, status: "COMPLETED" },
-    select: { patient: { select: { id: true, name: true, medicalRecordNumber: true } }, completedAt: true },
-    orderBy: { completedAt: "desc" },
-    take: 5,
-  });
 
   return {
     todayAppointments,

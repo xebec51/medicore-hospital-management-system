@@ -113,7 +113,7 @@ export async function toggleDoctorActive(id: string, isActive: boolean): Promise
   const doctor = await prisma.doctor.update({
     where: { id },
     data: { isActive },
-    include: { user: { select: { name: true } } },
+    select: { user: { select: { name: true } } },
   });
 
   await recordActivity({

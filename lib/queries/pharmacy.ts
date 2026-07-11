@@ -29,7 +29,7 @@ export function listPrescriptionsForPharmacy() {
 
 export type PharmacyPrescriptionItem = Awaited<ReturnType<typeof listPrescriptionsForPharmacy>>[number];
 
-export function listAllMedicines() {
+export function listAllMedicines(limit = 500) {
   return prisma.medicine.findMany({
     select: {
       id: true,
@@ -44,6 +44,7 @@ export function listAllMedicines() {
       status: true,
     },
     orderBy: { name: "asc" },
+    take: limit,
   });
 }
 

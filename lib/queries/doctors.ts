@@ -5,7 +5,7 @@ export async function resolveDoctorIdByUserId(userId: string): Promise<string | 
   return doctor?.id ?? null;
 }
 
-export function listDoctors() {
+export function listDoctors(limit = 500) {
   return prisma.doctor.findMany({
     select: {
       id: true,
@@ -23,6 +23,7 @@ export function listDoctors() {
       _count: { select: { appointments: true } },
     },
     orderBy: { user: { name: "asc" } },
+    take: limit,
   });
 }
 

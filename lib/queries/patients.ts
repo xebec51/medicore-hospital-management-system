@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 
-export function listPatients() {
+export function listPatients(limit = 500) {
   return prisma.patient.findMany({
+    take: limit,
     select: {
       id: true,
       medicalRecordNumber: true,
