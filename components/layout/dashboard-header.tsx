@@ -21,7 +21,6 @@ import type { AppRole } from "@/lib/constants/roles";
 
 interface DashboardHeaderProps {
   role: AppRole;
-  roleLabel: string;
   userName: string;
   title?: string;
 }
@@ -35,7 +34,7 @@ function initials(name: string) {
     .join("");
 }
 
-export function DashboardHeader({ role, roleLabel, userName, title }: DashboardHeaderProps) {
+export function DashboardHeader({ role, userName, title }: DashboardHeaderProps) {
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
   const { t } = useI18n();
 
@@ -44,7 +43,7 @@ export function DashboardHeader({ role, roleLabel, userName, title }: DashboardH
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
         <SheetContent side="left" className="w-72 p-0 sm:max-w-72">
           <SheetTitle className="sr-only">Navigation</SheetTitle>
-          <DashboardSidebar role={role} roleLabel={roleLabel} onNavigate={() => setMobileNavOpen(false)} />
+          <DashboardSidebar role={role} onNavigate={() => setMobileNavOpen(false)} />
         </SheetContent>
       </Sheet>
 
@@ -74,7 +73,7 @@ export function DashboardHeader({ role, roleLabel, userName, title }: DashboardH
           <DropdownMenuContent align="end" className="min-w-52">
             <DropdownMenuLabel className="flex flex-col">
               <span className="text-sm font-medium">{userName}</span>
-              <span className="text-xs font-normal text-muted-foreground">{roleLabel}</span>
+              <span className="text-xs font-normal text-muted-foreground">{t(`roles.${role}`)}</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem render={<Link href="/dashboard/profile" />}>

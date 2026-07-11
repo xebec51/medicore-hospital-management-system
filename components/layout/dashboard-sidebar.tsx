@@ -1,16 +1,20 @@
+"use client";
+
 import Link from "next/link";
 import { Activity } from "lucide-react";
 import { RoleAwareNav } from "./role-aware-nav";
+import { useI18n } from "@/lib/i18n/use-i18n";
 import type { AppRole } from "@/lib/constants/roles";
 
 interface DashboardSidebarProps {
   role: AppRole;
-  roleLabel: string;
   onNavigate?: () => void;
   className?: string;
 }
 
-export function DashboardSidebar({ role, roleLabel, onNavigate }: DashboardSidebarProps) {
+export function DashboardSidebar({ role, onNavigate }: DashboardSidebarProps) {
+  const { t } = useI18n();
+
   return (
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
       <div className="flex items-center gap-2.5 px-5 py-6">
@@ -21,7 +25,7 @@ export function DashboardSidebar({ role, roleLabel, onNavigate }: DashboardSideb
           <Link href="/" className="block truncate text-base font-semibold tracking-tight">
             MediCore
           </Link>
-          <p className="truncate text-xs text-sidebar-foreground/60">{roleLabel}</p>
+          <p className="truncate text-xs text-sidebar-foreground/60">{t(`roles.${role}`)}</p>
         </div>
       </div>
       <div className="flex-1 overflow-y-auto px-3 pb-4">

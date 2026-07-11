@@ -11,8 +11,8 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("nav.settings")}</h1>
-        <p className="text-sm text-muted-foreground">Configure your MediCore workspace preferences.</p>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("settingsPage.title")}</h1>
+        <p className="text-sm text-muted-foreground">{t("settingsPage.subtitle")}</p>
       </div>
       <Card>
         <CardHeader className="flex-row items-center justify-between">
@@ -21,15 +21,13 @@ export default function SettingsPage() {
               <Languages className="size-5" />
             </span>
             <div>
-              <CardTitle>Language</CardTitle>
-              <CardDescription>Choose your preferred display language.</CardDescription>
+              <CardTitle>{t("settingsPage.languageTitle")}</CardTitle>
+              <CardDescription>{t("settingsPage.languageDescription")}</CardDescription>
             </div>
           </div>
           <LanguageSwitcher variant="outline" />
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          Your selection is saved to this device and applied across the entire MediCore workspace.
-        </CardContent>
+        <CardContent className="text-sm text-muted-foreground">{t("settingsPage.languageNotice")}</CardContent>
       </Card>
     </div>
   );
