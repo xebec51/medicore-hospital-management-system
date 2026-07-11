@@ -6,24 +6,52 @@ import { StatCard } from "@/components/stat-card";
 import { EmptyState } from "@/components/empty-state";
 import { ActivityFeed } from "@/components/activity-feed";
 import { useI18n } from "@/lib/i18n/use-i18n";
+import { formatCurrency } from "@/lib/i18n/formatters";
 import type { ActivityLogItem } from "@/lib/queries/activity-logs";
 
-// TODO(phase-13): replace mock stats with real Prisma-backed analytics.
-export function AdminDashboardView({ recentActivity }: { recentActivity: ActivityLogItem[] }) {
-  const { t } = useI18n();
+interface AdminDashboardViewProps {
+  recentActivity: ActivityLogItem[];
+  totalPatients: number;
+  appointmentsToday: number;
+  activeDoctors: number;
+  revenueThisMonth: number;
+  pendingPrescriptions: number;
+  lowStockMedicines: number;
+}
+
+export function AdminDashboardView({
+  recentActivity,
+  totalPatients,
+  appointmentsToday,
+  activeDoctors,
+  revenueThisMonth,
+  pendingPrescriptions,
+  lowStockMedicines,
+}: AdminDashboardViewProps) {
+  const { locale, t } = useI18n();
   const c = "dashboardPages.admin";
+
+  const alerts = [
+    lowStockMedicines > 0 ? `${lowStockMedicines} medicine(s) are running low on stock.` : null,
+    pendingPrescriptions > 0 ? `${pendingPrescriptions} prescription(s) are awaiting pharmacy action.` : null,
+  ].filter((alert): alert is string => alert !== null);
 
   return (
     <div className="space-y-6">
       <RoleDashboardHero eyebrow={t(`${c}.eyebrow`)} title={t(`${c}.title`)} />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        <StatCard label={t(`${c}.stats.totalPatients`)} value="1,284" icon={Users2} tone="primary" />
-        <StatCard label={t(`${c}.stats.todayAppointments`)} value="42" icon={CalendarClock} tone="info" />
-        <StatCard label={t(`${c}.stats.activeDoctors`)} value="18" icon={Stethoscope} tone="clinical" />
-        <StatCard label={t(`${c}.stats.revenueThisMonth`)} value="Rp 412M" icon={Wallet} tone="success" />
-        <StatCard label={t(`${c}.stats.pendingPrescriptions`)} value="9" icon={Pill} tone="warning" />
-        <StatCard label={t(`${c}.stats.lowStockMedicines`)} value="5" icon={Activity} tone="warning" />
+        <StatCard label={t(`${c}.stats.totalPatients`)} value={totalPatients} icon={Users2} tone="primary" />
+        <StatCard label={t(`${c}.stats.todayAppointments`)} value={appointmentsToday} icon={CalendarClock} tone="info" />
+        <StatCard label={t(`${c}.stats.activeDoctors`)} value={activeDoctors} icon={Stethoscope} tone="clinical" />
+        <StatCard
+          label={t(`${c}.stats.revenueThisMonth`)}
+          value={formatCurrency(revenueThisMonth, locale)}
+          icon={Wallet}
+          tone="success"
+        />
+        <StatCard label={t(`${c}.stats.pendingPrescriptions`)} value={pendingPrescriptions} icon={Pill} tone="warning" />
+        <StatCard label={t(`${c}.stats.lowStockMedicines`)} value={lowStockMedicines} icon={Activity} tone="warning" />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -41,11 +69,21 @@ export function AdminDashboardView({ recentActivity }: { recentActivity: Activit
             <TriangleAlert className="size-4 text-warning" />
             <h3 className="font-semibold">{t("dashboard.operationalAlerts")}</h3>
           </div>
-          <EmptyState
-            className="mt-4 py-10"
-            title={t(`${c}.alertsEmptyTitle`)}
-            description={t(`${c}.alertsEmptyDesc`)}
-          />
+          {alerts.length ? (
+            <ul className="mt-4 space-y-2">
+              {alerts.map((alert) => (
+                <li key={alert} className="rounded-xl bg-warning/10 px-3 py-2 text-sm text-warning-foreground">
+                  {alert}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyState
+              className="mt-4 py-10"
+              title={t(`${c}.alertsEmptyTitle`)}
+              description={t(`${c}.alertsEmptyDesc`)}
+            />
+          )}
         </div>
       </div>
     </div>

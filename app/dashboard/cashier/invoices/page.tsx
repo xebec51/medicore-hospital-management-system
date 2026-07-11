@@ -3,15 +3,31 @@ import { DataTable } from "@/components/data-table";
 import { invoiceColumns } from "@/components/cashier/invoice-columns";
 import { GenerateInvoiceButton } from "@/components/cashier/generate-invoice-button";
 import { EmptyState } from "@/components/empty-state";
+import { ExportButton } from "@/components/export-button";
+import { getStatusLabel } from "@/lib/domain/status-labels";
+import { toMoneyNumber } from "@/lib/domain/billing";
 
 export default async function CashierInvoicesPage() {
   const [invoices, uninvoiced] = await Promise.all([listInvoices(), listCompletedAppointmentsWithoutInvoice()]);
 
+  const exportRows = invoices.map((inv) => ({
+    "Invoice Code": inv.invoiceCode,
+    Patient: inv.patient.name,
+    MRN: inv.patient.medicalRecordNumber,
+    Total: toMoneyNumber(inv.totalAmount),
+    Paid: toMoneyNumber(inv.paidAmount),
+    Due: inv.dueDate ? new Date(inv.dueDate).toISOString().slice(0, 10) : "",
+    Status: getStatusLabel("InvoiceStatus", inv.status),
+  }));
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Invoices</h1>
-        <p className="text-sm text-muted-foreground">Generate invoices and track payment status.</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Invoices</h1>
+          <p className="text-sm text-muted-foreground">Generate invoices and track payment status.</p>
+        </div>
+        <ExportButton data={exportRows} filename="medicore-invoices" sheetName="Invoices" />
       </div>
 
       {uninvoiced.length > 0 && (
