@@ -186,6 +186,11 @@ const en = {
     sideTitle: "Clinical operations, unified.",
     sideSubtitle:
       "From front desk to pharmacy, MediCore keeps every department synchronized around the patient journey.",
+    sideFeatures: {
+      queue: "Live queue boards keep waiting rooms moving",
+      pharmacy: "Prescription-to-dispense tracking with stock safeguards",
+      rbac: "Role-scoped access keeps patient data protected",
+    },
     unauthorizedTitle: "Access restricted",
     unauthorizedMessage: "You don't have permission to view this page.",
     backToDashboard: "Back to dashboard",
@@ -347,6 +352,7 @@ const en = {
   profile: {
     title: "Profile",
     subtitle: "Manage your personal account information.",
+    role: "Role",
     editingNotice: "Profile editing will be available once account management is connected.",
   },
   settingsPage: {

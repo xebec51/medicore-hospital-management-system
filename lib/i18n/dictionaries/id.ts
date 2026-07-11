@@ -189,6 +189,11 @@ const id: DeepPartial<typeof en> = {
     sideTitle: "Operasional klinis, menyatu.",
     sideSubtitle:
       "Dari meja depan hingga farmasi, MediCore menjaga setiap departemen tetap sinkron di sepanjang perjalanan pasien.",
+    sideFeatures: {
+      queue: "Papan antrian langsung menjaga ruang tunggu tetap lancar",
+      pharmacy: "Pelacakan resep hingga penyerahan dengan pengaman stok",
+      rbac: "Akses berbasis peran menjaga data pasien tetap terlindungi",
+    },
     unauthorizedTitle: "Akses dibatasi",
     unauthorizedMessage: "Anda tidak memiliki izin untuk melihat halaman ini.",
     backToDashboard: "Kembali ke dasbor",
@@ -350,6 +355,7 @@ const id: DeepPartial<typeof en> = {
   profile: {
     title: "Profil",
     subtitle: "Kelola informasi akun pribadi Anda.",
+    role: "Peran",
     editingNotice: "Pengeditan profil akan tersedia setelah manajemen akun terhubung.",
   },
   settingsPage: {

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { Menu, LogOut, Settings, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -85,7 +86,7 @@ export function DashboardHeader({ role, userName, title }: DashboardHeaderProps)
               {t("nav.settings")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" render={<Link href="/login" />}>
+            <DropdownMenuItem variant="destructive" onClick={() => signOut({ callbackUrl: "/login" })}>
               <LogOut className="size-4" />
               {t("nav.logout")}
             </DropdownMenuItem>

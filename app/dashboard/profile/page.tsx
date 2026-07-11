@@ -1,28 +1,10 @@
-"use client";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth/session";
+import { ProfileView } from "@/components/dashboard/profile-view";
 
-import { UserRound } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useI18n } from "@/lib/i18n/use-i18n";
+export default async function ProfilePage() {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
 
-// TODO(phase-6): populate from the authenticated user's profile.
-export default function ProfilePage() {
-  const { t } = useI18n();
-
-  return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("profile.title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("profile.subtitle")}</p>
-      </div>
-      <Card>
-        <CardHeader className="flex-row items-center gap-3">
-          <span className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <UserRound className="size-6" />
-          </span>
-          <CardTitle>Demo User</CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">{t("profile.editingNotice")}</CardContent>
-      </Card>
-    </div>
-  );
+  return <ProfileView name={session.user.name} email={session.user.email} role={session.user.role} />;
 }

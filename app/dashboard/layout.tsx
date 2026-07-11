@@ -1,15 +1,13 @@
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth/session";
 import { AppShell } from "@/components/layout/app-shell";
-import type { AppRole } from "@/lib/constants/roles";
 
-// TODO(phase-6): replace with the authenticated session's role/name from NextAuth.
-const PLACEHOLDER_SESSION: { role: AppRole; name: string } = {
-  role: "ADMIN",
-  name: "Demo User",
-};
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AppShell role={PLACEHOLDER_SESSION.role} userName={PLACEHOLDER_SESSION.name}>
+    <AppShell role={session.user.role} userName={session.user.name}>
       {children}
     </AppShell>
   );

@@ -1,18 +1,8 @@
 "use client";
 
-import { Stethoscope, HeartPulse, ClipboardList, Pill, Wallet, UserRound, ShieldCheck } from "lucide-react";
 import { useI18n } from "@/lib/i18n/use-i18n";
+import { roleIcons } from "@/lib/constants/role-icons";
 import type { AppRole } from "@/lib/constants/roles";
-
-const roleIcons: Record<AppRole, typeof Stethoscope> = {
-  ADMIN: ShieldCheck,
-  DOCTOR: Stethoscope,
-  NURSE: HeartPulse,
-  RECEPTIONIST: ClipboardList,
-  PHARMACIST: Pill,
-  CASHIER: Wallet,
-  PATIENT: UserRound,
-};
 
 const roleOrder: AppRole[] = ["ADMIN", "DOCTOR", "NURSE", "RECEPTIONIST", "PHARMACIST", "CASHIER", "PATIENT"];
 

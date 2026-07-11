@@ -1,19 +1,21 @@
-import Link from "next/link";
-import { Activity } from "lucide-react";
+import { Suspense } from "react";
+import { LoginForm } from "@/components/auth/login-form";
+import { LoginSidePanel } from "@/components/auth/login-side-panel";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
-export default function LoginPlaceholderPage() {
+export default function LoginPage() {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4 surface-gradient-hero px-4 py-20 text-center">
-      <span className="flex size-12 items-center justify-center rounded-2xl surface-gradient-primary text-white">
-        <Activity className="size-6" />
-      </span>
-      <h1 className="text-2xl font-semibold tracking-tight">Sign-in is coming online soon</h1>
-      <p className="max-w-sm text-sm text-muted-foreground">
-        Authentication is being wired up in a later build phase. Check back shortly.
-      </p>
-      <Link href="/" className="text-sm font-medium text-primary hover:underline">
-        Back to homepage
-      </Link>
+    <div className="grid min-h-screen lg:grid-cols-2">
+      <LoginSidePanel />
+
+      <div className="relative flex flex-col items-center justify-center px-6 py-16">
+        <div className="absolute top-6 right-6">
+          <LanguageSwitcher variant="outline" />
+        </div>
+        <Suspense>
+          <LoginForm />
+        </Suspense>
+      </div>
     </div>
   );
 }

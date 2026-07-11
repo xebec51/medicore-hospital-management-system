@@ -1,6 +1,10 @@
 import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth/session";
+import { roleDashboardPath } from "@/lib/constants/roles";
 
-// TODO(phase-6): redirect based on the authenticated session's role.
-export default function DashboardIndexPage() {
-  redirect("/dashboard/admin");
+export default async function DashboardIndexPage() {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+
+  redirect(roleDashboardPath[session.user.role]);
 }
