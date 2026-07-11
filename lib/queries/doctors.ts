@@ -1,5 +1,10 @@
 import { prisma } from "@/lib/prisma";
 
+export async function resolveDoctorIdByUserId(userId: string): Promise<string | null> {
+  const doctor = await prisma.doctor.findUnique({ where: { userId }, select: { id: true } });
+  return doctor?.id ?? null;
+}
+
 export function listDoctors() {
   return prisma.doctor.findMany({
     select: {

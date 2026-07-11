@@ -7,6 +7,7 @@ import { recordActivity } from "@/lib/domain/activity-log";
 import { generateAppointmentCode } from "@/lib/domain/codes";
 import { getNextQueueNumber } from "@/lib/domain/queue";
 import { combineDateAndTime } from "@/lib/domain/dates";
+import { resolveDoctorIdByUserId } from "@/lib/queries/doctors";
 import {
   appointmentIdSchema,
   cancelAppointmentSchema,
@@ -29,11 +30,6 @@ const APPOINTMENT_PATHS = [
 
 function revalidateAppointmentPaths() {
   for (const path of APPOINTMENT_PATHS) revalidatePath(path);
-}
-
-async function resolveDoctorId(userId: string): Promise<string | null> {
-  const doctor = await prisma.doctor.findUnique({ where: { userId }, select: { id: true } });
-  return doctor?.id ?? null;
 }
 
 export async function createAppointment(input: unknown): Promise<ActionResult> {
@@ -185,7 +181,7 @@ export async function startConsultation(input: unknown): Promise<ActionResult> {
   const parsed = appointmentIdSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: "Invalid input" };
 
-  const doctorId = await resolveDoctorId(session.user.id);
+  const doctorId = await resolveDoctorIdByUserId(session.user.id);
   if (!doctorId) return { success: false, error: "Doctor profile not found" };
 
   const existing = await prisma.appointment.findUnique({
@@ -217,7 +213,7 @@ export async function completeAppointment(input: unknown): Promise<ActionResult>
   const parsed = appointmentIdSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: "Invalid input" };
 
-  const doctorId = await resolveDoctorId(session.user.id);
+  const doctorId = await resolveDoctorIdByUserId(session.user.id);
   if (!doctorId) return { success: false, error: "Doctor profile not found" };
 
   const existing = await prisma.appointment.findUnique({

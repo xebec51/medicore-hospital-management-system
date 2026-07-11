@@ -24,7 +24,7 @@ export default async function ReceptionistQueuePage() {
         queueNumber={appt.queueNumber}
         patientName={appt.patient.name}
         mrn={appt.patient.medicalRecordNumber}
-        time={formatTime(appt.appointmentDate, "en")}
+        meta={formatTime(appt.appointmentDate, "en")}
         status={appt.status}
         reason={appt.reason}
         actions={<AppointmentRowActions appointment={appt} />}

@@ -5,7 +5,8 @@ interface QueueTicketCardProps {
   queueNumber: number;
   patientName: string;
   mrn: string;
-  time: string;
+  /** Secondary line after the MRN — typically a time or the assigned doctor's name. */
+  meta: string;
   status: string;
   reason?: string | null;
   actions?: React.ReactNode;
@@ -16,7 +17,7 @@ export function QueueTicketCard({
   queueNumber,
   patientName,
   mrn,
-  time,
+  meta,
   status,
   reason,
   actions,
@@ -39,7 +40,7 @@ export function QueueTicketCard({
           <StatusBadge status={status} domain="AppointmentStatus" />
         </div>
         <p className="truncate text-xs text-muted-foreground">
-          {mrn} · {time}
+          {mrn} · {meta}
           {reason ? ` · ${reason}` : ""}
         </p>
       </div>
