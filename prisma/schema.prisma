@@ -1,7 +1,6 @@
-// This is your Prisma schema file,
+// MediCore — Smart Hospital Management System
+// Prisma schema: operational hospital management data model.
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
   provider = "prisma-client"
@@ -10,4 +9,474 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// =========================================================================
+// Enums
+// =========================================================================
+
+enum UserRole {
+  ADMIN
+  DOCTOR
+  NURSE
+  RECEPTIONIST
+  PHARMACIST
+  CASHIER
+  PATIENT
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum BloodType {
+  A_POSITIVE
+  A_NEGATIVE
+  B_POSITIVE
+  B_NEGATIVE
+  AB_POSITIVE
+  AB_NEGATIVE
+  O_POSITIVE
+  O_NEGATIVE
+  UNKNOWN
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CHECKED_IN
+  IN_CONSULTATION
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum MedicalRecordStatus {
+  DRAFT
+  FINALIZED
+  ARCHIVED
+}
+
+enum PrescriptionStatus {
+  PENDING
+  PREPARED
+  DISPENSED
+  CANCELLED
+}
+
+enum MedicineStatus {
+  ACTIVE
+  LOW_STOCK
+  EXPIRED
+  INACTIVE
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PARTIALLY_PAID
+  PAID
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  E_WALLET
+  INSURANCE
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// =========================================================================
+// Identity
+// =========================================================================
+
+/// Authentication identity shared by every role. Patients and doctors
+/// optionally link back to a User; staff roles always have one.
+model User {
+  id        String     @id @default(cuid())
+  name      String
+  email     String     @unique
+  password  String
+  role      UserRole
+  status    UserStatus @default(ACTIVE)
+  phone     String?
+  avatarUrl String?    @map("avatar_url")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  patient Patient?
+  doctor  Doctor?
+
+  createdAppointments    Appointment[]   @relation("AppointmentCreatedBy")
+  recordedVitalSigns     VitalSign[]     @relation("VitalSignRecordedBy")
+  preparedPrescriptions  Prescription[]  @relation("PrescriptionPreparedBy")
+  dispensedPrescriptions Prescription[]  @relation("PrescriptionDispensedBy")
+  processedPayments      Payment[]       @relation("PaymentProcessedBy")
+  activityLogs           ActivityLog[]
+
+  @@index([role])
+  @@index([status])
+  @@map("users")
+}
+
+/// A hospital patient. May optionally be linked to a User account for
+/// patient-portal self-service access.
+model Patient {
+  id                    String     @id @default(cuid())
+  userId                String?    @unique @map("user_id")
+  medicalRecordNumber   String     @unique @map("medical_record_number")
+  name                  String
+  gender                Gender
+  birthDate             DateTime   @map("birth_date")
+  phone                 String?
+  email                 String?
+  address               String?
+  bloodType             BloodType  @default(UNKNOWN) @map("blood_type")
+  allergies             String?
+  emergencyContactName  String?    @map("emergency_contact_name")
+  emergencyContactPhone String?    @map("emergency_contact_phone")
+  status                UserStatus @default(ACTIVE)
+  createdAt             DateTime   @default(now()) @map("created_at")
+  updatedAt             DateTime   @updatedAt @map("updated_at")
+
+  user           User?           @relation(fields: [userId], references: [id])
+  appointments   Appointment[]
+  medicalRecords MedicalRecord[]
+  vitalSigns     VitalSign[]
+  prescriptions  Prescription[]
+  invoices       Invoice[]
+
+  @@index([status])
+  @@index([name])
+  @@map("patients")
+}
+
+// =========================================================================
+// Hospital structure
+// =========================================================================
+
+model Department {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  location    String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  doctors      Doctor[]
+  appointments Appointment[]
+
+  @@map("departments")
+}
+
+model Doctor {
+  id              String   @id @default(cuid())
+  userId          String   @unique @map("user_id")
+  departmentId    String   @map("department_id")
+  specialization  String
+  licenseNumber   String?  @unique @map("license_number")
+  consultationFee Decimal  @map("consultation_fee") @db.Decimal(12, 2)
+  bio             String?
+  roomNumber      String?  @map("room_number")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user           User             @relation(fields: [userId], references: [id])
+  department     Department       @relation(fields: [departmentId], references: [id])
+  schedules      DoctorSchedule[]
+  appointments   Appointment[]
+  medicalRecords MedicalRecord[]
+  prescriptions  Prescription[]
+
+  @@index([departmentId])
+  @@index([isActive])
+  @@map("doctors")
+}
+
+/// Recurring weekly availability. dayOfWeek follows JS convention (0 = Sunday).
+model DoctorSchedule {
+  id        String   @id @default(cuid())
+  doctorId  String   @map("doctor_id")
+  dayOfWeek Int      @map("day_of_week")
+  startTime String   @map("start_time")
+  endTime   String   @map("end_time")
+  quota     Int
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  doctor Doctor @relation(fields: [doctorId], references: [id])
+
+  @@index([doctorId, dayOfWeek])
+  @@map("doctor_schedules")
+}
+
+// =========================================================================
+// Appointments & consultation
+// =========================================================================
+
+model Appointment {
+  id                    String            @id @default(cuid())
+  appointmentCode       String            @unique @map("appointment_code")
+  patientId             String            @map("patient_id")
+  doctorId              String            @map("doctor_id")
+  departmentId          String            @map("department_id")
+  appointmentDate       DateTime          @map("appointment_date")
+  queueNumber           Int               @map("queue_number")
+  status                AppointmentStatus @default(SCHEDULED)
+  reason                String?
+  checkedInAt           DateTime?         @map("checked_in_at")
+  consultationStartedAt DateTime?         @map("consultation_started_at")
+  completedAt           DateTime?         @map("completed_at")
+  cancelledReason       String?           @map("cancelled_reason")
+  createdBy             String?           @map("created_by")
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
+
+  patient       Patient        @relation(fields: [patientId], references: [id])
+  doctor        Doctor         @relation(fields: [doctorId], references: [id])
+  department    Department     @relation(fields: [departmentId], references: [id])
+  createdByUser User?          @relation("AppointmentCreatedBy", fields: [createdBy], references: [id])
+  medicalRecord MedicalRecord?
+  vitalSigns    VitalSign[]
+  prescriptions Prescription[]
+  invoices      Invoice[]
+
+  @@unique([doctorId, appointmentDate, queueNumber])
+  @@index([patientId])
+  @@index([status])
+  @@index([appointmentDate])
+  @@map("appointments")
+}
+
+/// Created once consultation begins; belongs to exactly one appointment.
+/// Finalized records are treated as immutable in application logic and are
+/// never hard-deleted — only archived.
+model MedicalRecord {
+  id             String              @id @default(cuid())
+  appointmentId  String              @unique @map("appointment_id")
+  patientId      String              @map("patient_id")
+  doctorId       String              @map("doctor_id")
+  chiefComplaint String              @map("chief_complaint")
+  diagnosis      String?
+  doctorNotes    String?             @map("doctor_notes")
+  nurseNotes     String?             @map("nurse_notes")
+  treatmentPlan  String?             @map("treatment_plan")
+  followUpDate   DateTime?           @map("follow_up_date")
+  status         MedicalRecordStatus @default(DRAFT)
+  createdAt      DateTime            @default(now()) @map("created_at")
+  updatedAt      DateTime            @updatedAt @map("updated_at")
+
+  appointment   Appointment    @relation(fields: [appointmentId], references: [id])
+  patient       Patient        @relation(fields: [patientId], references: [id])
+  doctor        Doctor         @relation(fields: [doctorId], references: [id])
+  prescriptions Prescription[]
+
+  @@index([patientId])
+  @@index([doctorId])
+  @@index([status])
+  @@map("medical_records")
+}
+
+model VitalSign {
+  id               String   @id @default(cuid())
+  appointmentId    String   @map("appointment_id")
+  patientId        String   @map("patient_id")
+  recordedBy       String   @map("recorded_by")
+  bloodPressure    String?  @map("blood_pressure")
+  heartRate        Int?     @map("heart_rate")
+  temperature      Decimal? @db.Decimal(4, 1)
+  weight           Decimal? @db.Decimal(5, 2)
+  height           Decimal? @db.Decimal(5, 2)
+  oxygenSaturation Int?     @map("oxygen_saturation")
+  notes            String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  appointment    Appointment @relation(fields: [appointmentId], references: [id])
+  patient        Patient     @relation(fields: [patientId], references: [id])
+  recordedByUser User        @relation("VitalSignRecordedBy", fields: [recordedBy], references: [id])
+
+  @@index([appointmentId])
+  @@index([patientId])
+  @@map("vital_signs")
+}
+
+// =========================================================================
+// Pharmacy
+// =========================================================================
+
+model Prescription {
+  id               String             @id @default(cuid())
+  prescriptionCode String             @unique @map("prescription_code")
+  medicalRecordId  String             @map("medical_record_id")
+  appointmentId    String             @map("appointment_id")
+  patientId        String             @map("patient_id")
+  doctorId         String             @map("doctor_id")
+  status           PrescriptionStatus @default(PENDING)
+  notes            String?
+  preparedAt       DateTime?          @map("prepared_at")
+  preparedBy       String?            @map("prepared_by")
+  dispensedAt      DateTime?          @map("dispensed_at")
+  dispensedBy      String?            @map("dispensed_by")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
+
+  medicalRecord   MedicalRecord      @relation(fields: [medicalRecordId], references: [id])
+  appointment     Appointment        @relation(fields: [appointmentId], references: [id])
+  patient         Patient            @relation(fields: [patientId], references: [id])
+  doctor          Doctor             @relation(fields: [doctorId], references: [id])
+  preparedByUser  User?              @relation("PrescriptionPreparedBy", fields: [preparedBy], references: [id])
+  dispensedByUser User?              @relation("PrescriptionDispensedBy", fields: [dispensedBy], references: [id])
+  items           PrescriptionItem[]
+
+  @@index([patientId])
+  @@index([doctorId])
+  @@index([status])
+  @@map("prescriptions")
+}
+
+model PrescriptionItem {
+  id             String   @id @default(cuid())
+  prescriptionId String   @map("prescription_id")
+  medicineId     String   @map("medicine_id")
+  quantity       Int
+  dosage         String
+  frequency      String
+  duration       String
+  instructions   String?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  prescription Prescription @relation(fields: [prescriptionId], references: [id])
+  medicine     Medicine     @relation(fields: [medicineId], references: [id])
+
+  @@index([prescriptionId])
+  @@index([medicineId])
+  @@map("prescription_items")
+}
+
+/// Stock only decreases when a PrescriptionItem's prescription transitions
+/// to DISPENSED — enforced in application logic, never destructively.
+model Medicine {
+  id           String         @id @default(cuid())
+  medicineCode String         @unique @map("medicine_code")
+  name         String
+  category     String
+  stock        Int            @default(0)
+  unit         String
+  minimumStock Int            @map("minimum_stock")
+  expiryDate   DateTime?      @map("expiry_date")
+  price        Decimal        @db.Decimal(12, 2)
+  status       MedicineStatus @default(ACTIVE)
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+
+  prescriptionItems PrescriptionItem[]
+
+  @@index([status])
+  @@index([category])
+  @@map("medicines")
+}
+
+// =========================================================================
+// Billing
+// =========================================================================
+
+model Invoice {
+  id            String        @id @default(cuid())
+  invoiceCode   String        @unique @map("invoice_code")
+  patientId     String        @map("patient_id")
+  appointmentId String?       @map("appointment_id")
+  status        InvoiceStatus @default(UNPAID)
+  totalAmount   Decimal       @default(0) @map("total_amount") @db.Decimal(12, 2)
+  paidAmount    Decimal       @default(0) @map("paid_amount") @db.Decimal(12, 2)
+  dueDate       DateTime?     @map("due_date")
+  notes         String?
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  patient     Patient       @relation(fields: [patientId], references: [id])
+  appointment Appointment?  @relation(fields: [appointmentId], references: [id])
+  items       InvoiceItem[]
+  payments    Payment[]
+
+  @@index([patientId])
+  @@index([status])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String   @id @default(cuid())
+  invoiceId   String   @map("invoice_id")
+  description String
+  quantity    Int
+  unitPrice   Decimal  @map("unit_price") @db.Decimal(12, 2)
+  subtotal    Decimal  @db.Decimal(12, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+
+  @@index([invoiceId])
+  @@map("invoice_items")
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  paymentCode     String        @unique @map("payment_code")
+  invoiceId       String        @map("invoice_id")
+  amount          Decimal       @db.Decimal(12, 2)
+  method          PaymentMethod
+  status          PaymentStatus @default(PENDING)
+  paidAt          DateTime?     @map("paid_at")
+  referenceNumber String?       @map("reference_number")
+  processedBy     String?       @map("processed_by")
+  notes           String?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  invoice         Invoice @relation(fields: [invoiceId], references: [id])
+  processedByUser User?   @relation("PaymentProcessedBy", fields: [processedBy], references: [id])
+
+  @@index([invoiceId])
+  @@index([status])
+  @@map("payments")
+}
+
+// =========================================================================
+// Audit trail
+// =========================================================================
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String?  @map("user_id")
+  action      String
+  module      String
+  description String
+  ipAddress   String?  @map("ip_address")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([module])
+  @@index([createdAt])
+  @@map("activity_logs")
 }
