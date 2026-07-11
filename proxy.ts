@@ -6,7 +6,7 @@ import { roleDashboardPath, type AppRole } from "@/lib/constants/roles";
 const authSecret = process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET;
 
 // Pages every authenticated role may visit regardless of their role prefix.
-const SHARED_DASHBOARD_PATHS = ["/dashboard", "/dashboard/profile", "/dashboard/settings"];
+const SHARED_DASHBOARD_PATHS = ["/dashboard", "/dashboard/profile", "/dashboard/settings", "/dashboard/developer"];
 
 export default async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;

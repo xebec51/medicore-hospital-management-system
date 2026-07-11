@@ -35,6 +35,13 @@ export function DashboardSidebar({ role, onNavigate }: DashboardSidebarProps) {
         <p className="text-[11px] leading-snug text-sidebar-foreground/50">
           MediCore Hospital Management System — operational platform, not a diagnostic tool.
         </p>
+        <Link
+          href="/dashboard/developer"
+          onClick={onNavigate}
+          className="mt-2 inline-block text-[11px] font-medium text-sidebar-foreground/60 underline-offset-2 hover:text-sidebar-foreground hover:underline"
+        >
+          {t("developer.sidebarLink")}
+        </Link>
       </div>
     </div>
   );
