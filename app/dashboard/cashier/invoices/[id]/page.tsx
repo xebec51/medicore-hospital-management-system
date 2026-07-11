@@ -4,6 +4,7 @@ import { InvoiceSummaryCard } from "@/components/invoice-summary-card";
 import { PaymentPanel } from "@/components/payment-panel";
 import { AddInvoiceItemDialog } from "@/components/cashier/add-invoice-item-dialog";
 import { StatusBadge } from "@/components/status-badge";
+import { PrintButton } from "@/components/print-button";
 import { toMoneyNumber } from "@/lib/domain/billing";
 
 export default async function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -23,10 +24,13 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
             {invoice.appointment ? `Appointment ${invoice.appointment.appointmentCode}` : "Standalone invoice"}
           </p>
         </div>
-        {canModify ? <AddInvoiceItemDialog invoiceId={invoice.id} /> : null}
+        <div className="flex items-center gap-2 print:hidden">
+          <PrintButton />
+          {canModify ? <AddInvoiceItemDialog invoiceId={invoice.id} /> : null}
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2 print:grid-cols-1">
         <InvoiceSummaryCard
           invoiceCode={invoice.invoiceCode}
           status={invoice.status}
@@ -42,7 +46,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
         {canModify ? (
           <PaymentPanel invoiceId={invoice.id} balance={balance} />
         ) : (
-          <div className="rounded-2xl border border-border/70 bg-card p-5 text-center text-sm text-muted-foreground shadow-sm">
+          <div className="rounded-2xl border border-border/70 bg-card p-5 text-center text-sm text-muted-foreground shadow-sm print:hidden">
             This invoice is {invoice.status.toLowerCase()} and cannot accept further payments.
           </div>
         )}

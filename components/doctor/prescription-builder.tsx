@@ -97,7 +97,7 @@ export function PrescriptionBuilder({
                 <div className="flex items-center justify-between">
                   <p className="text-xs font-medium text-muted-foreground">Item {index + 1}</p>
                   {fields.length > 1 ? (
-                    <Button type="button" variant="ghost" size="icon-sm" onClick={() => remove(index)}>
+                    <Button type="button" variant="ghost" size="icon-sm" aria-label="Remove medicine" onClick={() => remove(index)}>
                       <Trash2 className="size-3.5 text-destructive" />
                     </Button>
                   ) : null}

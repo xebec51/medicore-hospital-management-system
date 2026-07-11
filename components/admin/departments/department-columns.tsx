@@ -63,7 +63,7 @@ export const departmentColumns: ColumnDef<DepartmentListItem>[] = [
         <DepartmentFormDialog
           department={row.original}
           trigger={
-            <Button variant="ghost" size="icon-sm">
+            <Button variant="ghost" size="icon-sm" aria-label="Edit department">
               <Pencil className="size-4" />
             </Button>
           }

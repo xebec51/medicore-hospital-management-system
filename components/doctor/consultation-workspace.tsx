@@ -3,7 +3,7 @@
 import { PatientIdentityCard } from "@/components/patient-identity-card";
 import { AppointmentTimeline } from "@/components/appointment-timeline";
 import { VitalSignPanel } from "@/components/vital-sign-panel";
-import { StatusBadge } from "@/components/status-badge";
+import { AppointmentStatusRail } from "@/components/appointment-status-rail";
 import { MedicalRecordForm } from "./medical-record-form";
 import { PrescriptionBuilder } from "./prescription-builder";
 import type { ConsultationWorkspaceData } from "@/lib/queries/medical-records";
@@ -18,14 +18,14 @@ export function ConsultationWorkspace({ data, medicines }: ConsultationWorkspace
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-border/70 bg-card p-4 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border/70 bg-card p-4 shadow-sm">
         <div>
           <p className="text-sm text-muted-foreground">{appointment.appointmentCode}</p>
           <h1 className="text-xl font-semibold tracking-tight">
             {appointment.doctor.user.name} · {appointment.doctor.specialization}
           </h1>
         </div>
-        <StatusBadge status={appointment.status} domain="AppointmentStatus" />
+        <AppointmentStatusRail status={appointment.status} className="w-full max-w-md sm:w-auto" />
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_minmax(0,1fr)]">

@@ -51,7 +51,7 @@ export function AppointmentRowActions({ appointment }: { appointment: Appointmen
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" disabled={isPending} />}>
+        <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" disabled={isPending} aria-label="Appointment actions" />}>
           <MoreHorizontal className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

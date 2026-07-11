@@ -36,7 +36,7 @@ export function UserStatusMenu({ user }: { user: UserListItem }) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" disabled={isPending} />}>
+      <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" disabled={isPending} aria-label="Change status" />}>
         <MoreHorizontal className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

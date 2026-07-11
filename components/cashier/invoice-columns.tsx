@@ -57,7 +57,12 @@ export const invoiceColumns: ColumnDef<InvoiceListItem>[] = [
     header: () => <span className="sr-only">Actions</span>,
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <Button variant="ghost" size="icon-sm" render={<Link href={`/dashboard/cashier/invoices/${row.original.id}`} />}>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label="View invoice"
+          render={<Link href={`/dashboard/cashier/invoices/${row.original.id}`} />}
+        >
           <Eye className="size-4" />
         </Button>
       </div>

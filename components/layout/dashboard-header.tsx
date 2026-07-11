@@ -62,7 +62,10 @@ export function DashboardHeader({ role, userName, title }: DashboardHeaderProps)
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <button className="flex items-center gap-2 rounded-full py-1 pr-1 pl-1 transition-colors hover:bg-muted">
+              <button
+                className="flex items-center gap-2 rounded-full py-1 pr-1 pl-1 transition-colors hover:bg-muted"
+                aria-label={`Account menu for ${userName}`}
+              >
                 <Avatar className="size-8">
                   <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
                     {initials(userName)}

@@ -49,7 +49,7 @@ export const receptionistPatientColumns: ColumnDef<PatientListItem>[] = [
         <PatientFormDialog
           patient={row.original}
           trigger={
-            <Button variant="ghost" size="icon-sm">
+            <Button variant="ghost" size="icon-sm" aria-label="Edit patient">
               <Pencil className="size-4" />
             </Button>
           }

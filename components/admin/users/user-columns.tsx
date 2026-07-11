@@ -39,7 +39,7 @@ export const userColumns: ColumnDef<UserListItem>[] = [
     header: () => <span className="sr-only">Actions</span>,
     cell: ({ row }) => (
       <div className="flex items-center justify-end gap-1">
-        <UserFormDialog user={row.original} trigger={<Button variant="ghost" size="icon-sm"><Pencil className="size-4" /></Button>} />
+        <UserFormDialog user={row.original} trigger={<Button variant="ghost" size="icon-sm" aria-label="Edit user"><Pencil className="size-4" /></Button>} />
         <UserStatusMenu user={row.original} />
       </div>
     ),

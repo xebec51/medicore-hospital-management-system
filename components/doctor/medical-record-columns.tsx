@@ -54,6 +54,7 @@ export const doctorMedicalRecordColumns: ColumnDef<DoctorMedicalRecordItem>[] = 
         <Button
           variant="ghost"
           size="icon-sm"
+          aria-label="View consultation"
           render={<Link href={`/dashboard/doctor/consultation/${row.original.appointmentId}`} />}
         >
           <Eye className="size-4" />

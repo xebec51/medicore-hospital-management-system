@@ -87,6 +87,7 @@ export function DoctorScheduleSheet({ doctor, trigger }: { doctor: DoctorListIte
                 <Button
                   variant="ghost"
                   size="icon-sm"
+                  aria-label="Remove schedule slot"
                   disabled={removingId === slot.id}
                   onClick={() => handleRemove(slot.id)}
                 >

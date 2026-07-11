@@ -37,11 +37,11 @@ function StockAdjustCell({ medicine }: { medicine: MedicineListItem }) {
 
   return (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon-sm" onClick={() => adjust(-1)} disabled={medicine.stock <= 0}>
+      <Button variant="ghost" size="icon-sm" aria-label="Decrease stock" onClick={() => adjust(-1)} disabled={medicine.stock <= 0}>
         <Minus className="size-3.5" />
       </Button>
       <MedicineStockBadge status={medicine.status} stock={medicine.stock} unit={medicine.unit} />
-      <Button variant="ghost" size="icon-sm" onClick={() => adjust(1)}>
+      <Button variant="ghost" size="icon-sm" aria-label="Increase stock" onClick={() => adjust(1)}>
         <Plus className="size-3.5" />
       </Button>
     </div>
@@ -84,7 +84,7 @@ export const medicineColumns: ColumnDef<MedicineListItem>[] = [
         <MedicineFormDialog
           medicine={row.original}
           trigger={
-            <Button variant="ghost" size="icon-sm">
+            <Button variant="ghost" size="icon-sm" aria-label="Edit medicine">
               <Pencil className="size-4" />
             </Button>
           }

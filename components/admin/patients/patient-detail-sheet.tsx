@@ -13,7 +13,7 @@ export function PatientDetailSheet({ patient }: { patient: PatientListItem }) {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <Button variant="ghost" size="icon-sm" onClick={() => setOpen(true)}>
+      <Button variant="ghost" size="icon-sm" aria-label="View patient profile" onClick={() => setOpen(true)}>
         <Eye className="size-4" />
       </Button>
       <SheetContent side="right" className="w-full sm:max-w-md">

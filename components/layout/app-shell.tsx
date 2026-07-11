@@ -12,14 +12,16 @@ interface AppShellProps {
 export function AppShell({ role, userName, title, children }: AppShellProps) {
   return (
     <div className="flex min-h-screen bg-background">
-      <aside className="hidden w-72 shrink-0 border-r border-sidebar-border lg:block">
+      <aside className="hidden w-72 shrink-0 border-r border-sidebar-border lg:block print:hidden">
         <div className="sticky top-0 h-screen">
           <DashboardSidebar role={role} />
         </div>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
-        <DashboardHeader role={role} userName={userName} title={title} />
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+        <div className="print:hidden">
+          <DashboardHeader role={role} userName={userName} title={title} />
+        </div>
+        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 print:p-0">{children}</main>
       </div>
     </div>
   );

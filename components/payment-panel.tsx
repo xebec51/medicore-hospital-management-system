@@ -54,7 +54,7 @@ export function PaymentPanel({ invoiceId, balance }: { invoiceId: string; balanc
   }
 
   return (
-    <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm">
+    <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm print:hidden">
       <div className="flex items-center gap-2">
         <Wallet className="size-4.5 text-primary" />
         <h3 className="font-semibold">Process payment</h3>

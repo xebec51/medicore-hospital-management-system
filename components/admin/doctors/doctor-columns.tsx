@@ -77,7 +77,7 @@ export function buildDoctorColumns(departments: { id: string; name: string }[]):
           <DoctorScheduleSheet
             doctor={row.original}
             trigger={
-              <Button variant="ghost" size="icon-sm">
+              <Button variant="ghost" size="icon-sm" aria-label="Manage schedule">
                 <CalendarDays className="size-4" />
               </Button>
             }
@@ -86,7 +86,7 @@ export function buildDoctorColumns(departments: { id: string; name: string }[]):
             doctor={row.original}
             departments={departments}
             trigger={
-              <Button variant="ghost" size="icon-sm">
+              <Button variant="ghost" size="icon-sm" aria-label="Edit doctor">
                 <Pencil className="size-4" />
               </Button>
             }
