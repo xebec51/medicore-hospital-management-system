@@ -35,6 +35,7 @@ const id: DeepPartial<typeof en> = {
     goHome: "Kembali ke beranda",
     today: "Hari ini",
     all: "Semua",
+    page: "Halaman {current} dari {total}",
     actions: "Aksi",
     status: "Status",
     date: "Tanggal",
@@ -57,6 +58,9 @@ const id: DeepPartial<typeof en> = {
     male: "Laki-laki",
     female: "Perempuan",
     other: "Lainnya",
+    allergies: "Alergi",
+    emergencyContact: "Kontak Darurat",
+    bloodType: "Golongan Darah",
   },
   nav: {
     dashboard: "Dasbor",

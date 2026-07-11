@@ -32,6 +32,7 @@ const en = {
     goHome: "Go to homepage",
     today: "Today",
     all: "All",
+    page: "Page {current} of {total}",
     actions: "Actions",
     status: "Status",
     date: "Date",
@@ -54,6 +55,9 @@ const en = {
     male: "Male",
     female: "Female",
     other: "Other",
+    allergies: "Allergies",
+    emergencyContact: "Emergency Contact",
+    bloodType: "Blood Type",
   },
   nav: {
     dashboard: "Dashboard",
