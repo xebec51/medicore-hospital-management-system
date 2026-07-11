@@ -598,7 +598,7 @@ interface AppointmentSeed {
 }
 
 const APPOINTMENTS: AppointmentSeed[] = [
-  { key: "a1", patientIndex: 1, doctorEmail: "doctor@medicore.demo", departmentSlug: "general-medicine", days: -7, time: "09:00", status: "COMPLETED", reason: "Fever and persistent cough" },
+  { key: "a1", patientIndex: 0, doctorEmail: "doctor@medicore.demo", departmentSlug: "general-medicine", days: -7, time: "09:00", status: "COMPLETED", reason: "Fever and persistent cough" },
   { key: "a2", patientIndex: 2, doctorEmail: "doctor@medicore.demo", departmentSlug: "general-medicine", days: -5, time: "10:00", status: "COMPLETED", reason: "Hypertension follow-up checkup" },
   { key: "a3", patientIndex: 8, doctorEmail: "bimo.prasetyo@medicore.demo", departmentSlug: "cardiology", days: -3, time: "09:30", status: "COMPLETED", reason: "Chest pain evaluation" },
   { key: "a4", patientIndex: 3, doctorEmail: "anita.kusuma@medicore.demo", departmentSlug: "pediatrics", days: -2, time: "11:00", status: "COMPLETED", reason: "Routine child vaccination" },
@@ -610,7 +610,7 @@ const APPOINTMENTS: AppointmentSeed[] = [
   { key: "a10", patientIndex: 8, doctorEmail: "bimo.prasetyo@medicore.demo", departmentSlug: "cardiology", days: 0, time: "09:30", status: "IN_CONSULTATION", reason: "Hypertension follow-up" },
   { key: "a11", patientIndex: 10, doctorEmail: "doctor@medicore.demo", departmentSlug: "general-medicine", days: 0, time: "15:00", status: "SCHEDULED", reason: "Skin rash" },
   { key: "a12", patientIndex: 11, doctorEmail: "anita.kusuma@medicore.demo", departmentSlug: "pediatrics", days: 2, time: "09:00", status: "SCHEDULED", reason: "Routine growth checkup" },
-  { key: "a13", patientIndex: 12, doctorEmail: "clara.susanto@medicore.demo", departmentSlug: "neurology", days: 3, time: "10:00", status: "SCHEDULED", reason: "Migraine consultation" },
+  { key: "a13", patientIndex: 0, doctorEmail: "clara.susanto@medicore.demo", departmentSlug: "neurology", days: 3, time: "10:00", status: "SCHEDULED", reason: "Migraine consultation" },
   { key: "a14", patientIndex: 13, doctorEmail: "dimas.nugroho@medicore.demo", departmentSlug: "orthopedics", days: 5, time: "11:00", status: "SCHEDULED", reason: "Fracture follow-up" },
   { key: "a15", patientIndex: 15, doctorEmail: "bimo.prasetyo@medicore.demo", departmentSlug: "cardiology", days: 7, time: "09:00", status: "SCHEDULED", reason: "Annual heart checkup" },
   { key: "a16", patientIndex: 16, doctorEmail: "doctor@medicore.demo", departmentSlug: "general-medicine", days: 10, time: "09:00", status: "SCHEDULED", reason: "General consultation" },
