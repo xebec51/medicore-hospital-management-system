@@ -26,6 +26,8 @@ export function getPatientProfile(patientId: string) {
   });
 }
 
+export type PatientProfile = NonNullable<Awaited<ReturnType<typeof getPatientProfile>>>;
+
 export function listOwnAppointments(patientId: string) {
   return prisma.appointment.findMany({
     where: { patientId },

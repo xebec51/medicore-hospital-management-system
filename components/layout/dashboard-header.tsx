@@ -5,7 +5,7 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { Code2, Menu, LogOut, Settings, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +24,7 @@ import type { AppRole } from "@/lib/constants/roles";
 interface DashboardHeaderProps {
   role: AppRole;
   userName: string;
+  avatarUrl?: string | null;
   title?: string;
 }
 
@@ -36,7 +37,7 @@ function initials(name: string) {
     .join("");
 }
 
-export function DashboardHeader({ role, userName, title }: DashboardHeaderProps) {
+export function DashboardHeader({ role, userName, avatarUrl, title }: DashboardHeaderProps) {
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
   const { t } = useI18n();
 
@@ -68,6 +69,7 @@ export function DashboardHeader({ role, userName, title }: DashboardHeaderProps)
                 aria-label={`Account menu for ${userName}`}
               >
                 <Avatar className="size-8">
+                  {avatarUrl ? <AvatarImage src={avatarUrl} alt={userName} referrerPolicy="no-referrer" /> : null}
                   <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
                     {initials(userName)}
                   </AvatarFallback>

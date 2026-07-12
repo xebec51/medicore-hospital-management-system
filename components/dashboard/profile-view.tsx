@@ -1,17 +1,21 @@
 "use client";
 
-import { Mail, UserRound } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AccountOverviewCard } from "@/components/profile/account-overview-card";
+import { ChangePasswordCard } from "@/components/profile/change-password-card";
+import { PatientDetailsCard } from "@/components/profile/patient-details-card";
+import { DoctorDetailsCard } from "@/components/profile/doctor-details-card";
 import { useI18n } from "@/lib/i18n/use-i18n";
-import type { AppRole } from "@/lib/constants/roles";
+import type { OwnAccount } from "@/lib/queries/users";
+import type { PatientProfile } from "@/lib/queries/patient-portal";
+import type { DoctorProfile } from "@/lib/queries/doctors";
 
 interface ProfileViewProps {
-  name: string;
-  email: string;
-  role: AppRole;
+  account: OwnAccount;
+  patient: PatientProfile | null;
+  doctor: DoctorProfile | null;
 }
 
-export function ProfileView({ name, email, role }: ProfileViewProps) {
+export function ProfileView({ account, patient, doctor }: ProfileViewProps) {
   const { t } = useI18n();
 
   return (
@@ -20,27 +24,11 @@ export function ProfileView({ name, email, role }: ProfileViewProps) {
         <h1 className="text-2xl font-semibold tracking-tight">{t("profile.title")}</h1>
         <p className="text-sm text-muted-foreground">{t("profile.subtitle")}</p>
       </div>
-      <Card>
-        <CardHeader className="flex-row items-center gap-3">
-          <span className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <UserRound className="size-6" />
-          </span>
-          <div>
-            <CardTitle>{name}</CardTitle>
-            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Mail className="size-3.5" />
-              {email}
-            </p>
-          </div>
-        </CardHeader>
-        <CardContent className="flex items-center justify-between border-t border-border/60 pt-4 text-sm">
-          <span className="text-muted-foreground">{t("profile.role")}</span>
-          <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-            {t(`roles.${role}`)}
-          </span>
-        </CardContent>
-      </Card>
-      <p className="text-xs text-muted-foreground">{t("profile.editingNotice")}</p>
+
+      <AccountOverviewCard account={account} />
+      {patient ? <PatientDetailsCard patient={patient} /> : null}
+      {doctor ? <DoctorDetailsCard doctor={doctor} /> : null}
+      <ChangePasswordCard />
     </div>
   );
 }
