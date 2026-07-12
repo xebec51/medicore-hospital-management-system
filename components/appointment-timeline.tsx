@@ -3,7 +3,7 @@
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { useI18n } from "@/lib/i18n/use-i18n";
-import { formatDate } from "@/lib/i18n/formatters";
+import { formatDateTime } from "@/lib/i18n/formatters";
 import { cn } from "@/lib/utils";
 
 interface TimelineAppointment {
@@ -39,7 +39,7 @@ export function AppointmentTimeline({
         <li key={appt.id} className="relative">
           <span className="absolute top-1 -left-[26px] size-2.5 rounded-full border-2 border-background bg-primary" />
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm font-medium">{formatDate(appt.appointmentDate, locale, "d MMM yyyy, HH:mm")}</p>
+            <p className="text-sm font-medium">{formatDateTime(appt.appointmentDate, locale)}</p>
             <StatusBadge status={appt.status} domain="AppointmentStatus" />
           </div>
           <p className="text-sm text-muted-foreground">

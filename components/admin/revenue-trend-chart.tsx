@@ -23,7 +23,7 @@ export function RevenueTrendChart({ data }: RevenueTrendChartProps) {
           tickLine={false}
           axisLine={false}
           fontSize={11}
-          tickFormatter={(value: string) => formatDate(value, locale, "d MMM")}
+          tickFormatter={(value: string) => formatDate(value, locale, "monthDay")}
         />
         <YAxis
           tickLine={false}
@@ -35,7 +35,7 @@ export function RevenueTrendChart({ data }: RevenueTrendChartProps) {
         <ChartTooltip
           content={
             <ChartTooltipContent
-              labelFormatter={(value) => formatDate(String(value), locale, "d MMM yyyy")}
+              labelFormatter={(value) => formatDate(String(value), locale)}
               formatter={(value) => [formatCurrency(Number(value), locale), "Revenue"]}
             />
           }
