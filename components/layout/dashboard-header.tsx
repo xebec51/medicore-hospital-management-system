@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -75,10 +76,12 @@ export function DashboardHeader({ role, userName, title }: DashboardHeaderProps)
             }
           />
           <DropdownMenuContent align="end" className="min-w-52">
-            <DropdownMenuLabel className="flex flex-col">
-              <span className="text-sm font-medium">{userName}</span>
-              <span className="text-xs font-normal text-muted-foreground">{t(`roles.${role}`)}</span>
-            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="flex flex-col">
+                <span className="text-sm font-medium">{userName}</span>
+                <span className="text-xs font-normal text-muted-foreground">{t(`roles.${role}`)}</span>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem render={<Link href="/dashboard/profile" />}>
               <UserRound className="size-4" />

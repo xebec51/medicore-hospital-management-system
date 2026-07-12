@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -40,7 +41,9 @@ export function UserStatusMenu({ user }: { user: UserListItem }) {
         <MoreHorizontal className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Change status</DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Change status</DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         {STATUSES.filter((status) => status !== user.status).map((status) => (
           <DropdownMenuItem key={status} onClick={() => handleStatusChange(status)}>
