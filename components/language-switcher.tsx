@@ -12,14 +12,20 @@ import { useI18n } from "@/lib/i18n/use-i18n";
 import { locales, localeLabels, localeShortLabels } from "@/lib/i18n/locales";
 import { cn } from "@/lib/utils";
 
-export function LanguageSwitcher({ variant = "ghost" }: { variant?: "ghost" | "outline" }) {
+export function LanguageSwitcher({
+  variant = "ghost",
+  className,
+}: {
+  variant?: "ghost" | "outline";
+  className?: string;
+}) {
   const { locale, setLocale } = useI18n();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant={variant} size="sm" className="gap-1.5 px-2.5">
+          <Button variant={variant} size="sm" className={cn("gap-1.5 px-2.5", className)}>
             <Globe className="size-4" />
             <span className="text-xs font-medium">{localeShortLabels[locale]}</span>
           </Button>
